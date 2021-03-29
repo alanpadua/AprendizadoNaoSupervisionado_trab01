@@ -12,7 +12,7 @@ class Processamento:
         self.PATH_DATASET: str = 'Dataset/'
         self.path_conjunto: str = self.PATH_DATASET + path_conjunto
 
-    def readDataset(self):
+    def read_dataset(self):
         """
         Lê o Dataset e retorna um Dataframe
 
@@ -23,7 +23,7 @@ class Processamento:
 
         return self.conjunto
 
-    def removeColunas(self, colunas: list):
+    def remove_colunas(self, colunas: list):
         """
         Remove as colunas passadas como lista e retorna o próprio conjunto.
 
@@ -37,7 +37,7 @@ class Processamento:
 
         return self.conjunto
 
-    def salvarDataset(self, nome_dataset: str):
+    def salvar_dataset(self, nome_dataset: str):
         """
         Salva o Dataset já processado com o nome_dataset
         :param nome_dataset:
@@ -45,3 +45,15 @@ class Processamento:
         :return:
         """
         self.conjunto.to_csv(self.PATH_DATASET + nome_dataset)
+
+    def filtrar_conjunto(self, max_item_conjunto: int = None, filtro: str = None):
+
+        if filtro != None:
+            self.conjunto = self.conjunto.query(filtro).reset_index()
+            # self.conjunto = self.conjunto(filtro)
+            # self.conjunto = self.conjunto(filtro).reset_index()
+
+        if max_item_conjunto != None:
+            self.conjunto = self.conjunto[0: max_item_conjunto]
+
+        return self.conjunto
