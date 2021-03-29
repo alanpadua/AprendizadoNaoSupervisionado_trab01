@@ -40,8 +40,9 @@ class Main:
         print("Teste Kmeans")
         conjunto = self.getDatasetProcessado()
         kmeansCalculo = KmeansCalculo(conjunto)
-        # kmeansCalculo.fit_k_means(qt_centroids=5, parada=20, max_iter=20)
-        x, y, N, matriz = kmeansCalculo.fit_k_means(qt_centroids=5, parada=20, max_iter=20, max_item_conjunto=500)
+        filtro = "cases > 1 and deaths > 1"
+        x, y, N, matriz = kmeansCalculo.fit_k_means(qt_centroids=5, parada=20, max_iter=20, max_item_conjunto=500, filtro=filtro)
+        # x, y, N, matriz = kmeansCalculo.fit_k_means(qt_centroids=5, parada=20, max_iter=20)
         kmeansCalculo.distribuir_pontos_centroids(matriz)
         self.graficos.grafico_com_centroiods(kmeansCalculo.conjunto, kmeansCalculo.gerar_pontos_centroids(3))
 

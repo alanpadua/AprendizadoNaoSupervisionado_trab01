@@ -11,7 +11,7 @@ class KmeansCalculo:
         self.x = None
         self.y = None
         self.N = None
-        self.conjunto = conjunto
+        self.conjunto: pd.DataFrame = conjunto
         self.centroids = None
         self.matriz = None
 
@@ -19,13 +19,11 @@ class KmeansCalculo:
         hipotenusa = ((a * a) + (b * b))
         return hipotenusa
 
-    def fit_k_means(self, qt_centroids: list, parada: int, max_iter: int, max_item_conjunto: int = None, filtro: str = ''):
+    def fit_k_means(self, qt_centroids: list, parada: int, max_iter: int, max_item_conjunto: int = None,
+                    filtro: str = None):
 
-        # print("aqui")
-        # print(len(self.conjunto))
-        # # self.conjunto = self.conjunto.query("cases > 1")
-        # print(len(self.conjunto))
-        # print("aqui fim")
+        if filtro != None:
+            self.conjunto = self.conjunto.query(filtro).reset_index()
 
         colunm_x: str = 'cases'
         colunm_y: str = 'deaths'
@@ -101,7 +99,7 @@ class KmeansCalculo:
 
         matriz = pd.DataFrame(matriz, columns=['ponto', 'centroid', 'dist'])
 
-        print(type(matriz))
+        # print(type(matriz))
         return matriz
 
     def distribuir_pontos_centroids(self, matriz: pd.DataFrame):
@@ -112,4 +110,4 @@ class KmeansCalculo:
 
         matriz = matriz.sort_values(by='dist')
         for index, row in matriz.iterrows():
-             print(f"ponto: {row.ponto}, centroid: {row.centroid}, dist: {row.dist}")
+            print(f"ponto: {row.ponto}, centroid: {row.centroid}, dist: {row.dist}")
