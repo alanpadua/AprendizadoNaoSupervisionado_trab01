@@ -64,5 +64,5 @@ class Main:
 main = Main()
 main.processar_dataset()
 # main.imprimir_graficos()
-main.calculo_hipotenusa()
+# main.calculo_hipotenusa()
 main.fit_k_means()
