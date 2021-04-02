@@ -1,3 +1,4 @@
+import matplotlib
 import matplotlib.pyplot as plt
 import mpld3
 import numpy as np
@@ -5,12 +6,19 @@ import pandas as pd
 import plotly.express as px
 import seaborn as sns
 from mpld3 import plugins
+import random
 
 
 class Graficos:
 
     def __init__(self):
         self.x: str = 'x'
+        # self.cores = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink',
+        #               'tab:gray',
+        #               'tab:olive', 'tab:cyan']
+        self.cores = {'blue', 'orange', 'green', 'red', 'purple', 'brown', 'pink',
+                      'gray',
+                      'olive', 'cyan'}
 
     def plot_seaborn(self, conjunto: pd.DataFrame):
         plot_df = conjunto.reset_index()
@@ -61,11 +69,61 @@ class Graficos:
         y = conjunto.deaths.values
 
         colors = np.random.rand(N)
-
-        area = (30 * np.random.rand(N)) ** 2  # 0 to 15 point radii
+        area = self.mensurar_densidade_area(N)
         plt.scatter(x, y, s=area, c=colors, alpha=0.5)
 
         pontos = np.array(pontos_centroid)
+        plt.scatter(pontos[:, 0], pontos[:, 1], color='black', marker="x", alpha=1)
 
-        plt.scatter(pontos[:, 0], pontos[:, 1], color='red', marker="x", alpha=1)
+        self.label_do_centroid(zip(pontos[:, 0], pontos[:, 1]))
+
         plt.show()
+
+    def label_do_centroid(self, pontos_zip: zip):
+        count: int = 0
+        for x, y in pontos_zip:
+            label: str = f"centroid_{count}: ({x},{y})"
+            # label = f"centroid_{count}"
+            plt.annotate(label,  # Texto
+                         (x, y),  # Coorenadas dos pontos x e y
+                         textcoords="offset points",  # Como o texto se posicionara
+                         xytext=(0, 10),  # Ditância do texto para o ponto (x,y)
+                         ha='center')  # horizontal alinhamento pode ser: left, right or center
+            count += 1
+
+    def grafico_com_centroiods_agrupados(self, matriz: pd.DataFrame, pontos_centroid: list):
+
+        lista_cores = self.cores
+        count: int = 0
+
+        for _grupo in range(0, len(pontos_centroid)):
+            # Filtrar pro grupo de centroids
+            filtro = f"centroid_id == 'centroid_{count}'"
+            sub_conjunto = matriz.query(filtro)
+            N = len(sub_conjunto)
+
+            area = self.mensurar_densidade_area(N)
+            # cor = self.cores_ramdomicas()
+            cor = random.sample(lista_cores, 1)
+            lista_cores.remove(cor[0])
+
+            # Pontos Agrupados
+            plt.scatter(sub_conjunto.ponto_x, sub_conjunto.ponto_y, color=cor, s=area, alpha=0.5)
+
+            # Centroids
+            plt.scatter(pontos_centroid[_grupo][0], pontos_centroid[_grupo][1], color=cor, s=50, marker="x", alpha=1)
+            self.label_do_centroid(pontos_centroid)
+            count += 1
+
+        plt.show()
+
+    def mensurar_densidade_area(self, N):
+        area = (30 * np.random.rand(N)) ** 2  # 0 to 15 point radii
+        return area
+
+    def cores_ramdomicas(self):
+        r = random.random()
+        b = random.random()
+        g = random.random()
+        color = (r, g, b)
+        return color

@@ -12,6 +12,7 @@ pandas = "~=1.2.3"
 plotly = "~=4.14.3"
 seaborn = "~=0.11.1"
 mpmath = "*"
+scikit-learn = "*"
 
 [requires]
 python_version = "3.7"

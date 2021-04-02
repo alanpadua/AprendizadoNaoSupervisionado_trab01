@@ -8,6 +8,7 @@ class Main:
 
     def __init__(self):
         print("Main")
+        self.K = 5
         self.formulas = Formulas()
         self.graficos = Graficos()
         self.labels: list = ['date', 'county', 'state', 'fips', 'cases', 'deaths']
@@ -31,23 +32,9 @@ class Main:
         self.graficos.plot_scatter(conjunto)
         self.graficos.mpld3(conjunto)
 
-    def calculo_hipotenusa(self):
-        print("Calculo Hipotenusa")
-        hipotenusa = self.formulas.calcula_hipotenusa(1.2, 4.5)
-
-    def fit_k_means(self):
-        print("Teste Kmeans")
-        conjunto = self.get_dataset_filtrado()
-        kmeansCalculo = KmeansCalculo(conjunto)
-
-        x, y, N, matriz = kmeansCalculo.fit_k_means(qt_centroids=5, parada=20, max_iter=20)
-        # x, y, N, matriz = kmeansCalculo.fit_k_means(qt_centroids=5, parada=20, max_iter=20)
-        kmeansCalculo.distribuir_pontos_centroids(matriz)
-        self.graficos.grafico_com_centroiods(kmeansCalculo.conjunto, kmeansCalculo.gerar_pontos_centroids(3))
-
     def get_dataset_processado(self):
         processamento = Processamento('dataset_processado.csv')
-        conjunto = processamento.readDataset()
+        conjunto = processamento.read_dataset()
 
         return conjunto
 
@@ -55,14 +42,28 @@ class Main:
         processamento = Processamento('dataset_processado.csv')
         conjunto = processamento.read_dataset()
 
-        filtro = "cases > 1 and deaths > 1"
+        filtro = "cases > 2 and deaths > 2"
         conjunto = processamento.filtrar_conjunto(max_item_conjunto=500, filtro=filtro)
 
         return conjunto
+
+    def fit_k_means(self):
+        print("Teste Kmeans")
+        conjunto = self.get_dataset_filtrado()
+        # conjunto = self.get_dataset_processado()
+        kmeansCalculo = KmeansCalculo(conjunto, parada=20, max_iter=20)
+
+        X, y, N, centroids, matriz = kmeansCalculo.fit_k_means(qt_centroids=self.K)
+        # X, y, N, centroids, matriz = kmeansCalculo.fit_k_means(qt_centroids=5, parada=20, max_iter=20)
+
+        # self.graficos.grafico_com_centroiods(kmeansCalculo.conjunto, centroids)
+        self.graficos.grafico_com_centroiods_agrupados(matriz, centroids)
+
+
+        # kmeansCalculo.lista_centroids_mais_proximos(matriz)
 
 
 main = Main()
 main.processar_dataset()
 # main.imprimir_graficos()
-# main.calculo_hipotenusa()
 main.fit_k_means()
