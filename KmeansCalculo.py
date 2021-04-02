@@ -20,6 +20,28 @@ class KmeansCalculo:
         hipotenusa = ((a * a) + (b * b))
         return hipotenusa
 
+    def lista_centroids_mais_proximos(self, matriz: pd.DataFrame):
+        df = matriz.squeeze()
+        centroides = [centroides for centroides in df['centroid'].astype('str').unique()]
+
+        resultado = []
+        for centroid in centroides:
+            sorted_df = df[df['centroid'].astype('str') == centroid ]
+            c = df[df['centroid'].astype('str') == centroid ]['centroid'].to_list()[0]
+            sorted_df['dist'] = sorted_df['dist'].astype('float64')
+            sorted_df = sorted_df.sort_values(by=['dist'])
+            resultado.append( [ c, sorted_df['ponto'].to_list()[:50] ] )
+
+        #resultado = pd.DataFrame(resultado, columns=['centroid', 'ponto'])
+        centroids_proximos = []
+        for ponto in resultado:
+            coordenadas = ponto[1]
+            X = [ coordenada[0] for coordenada in coordenadas ]
+            Y = [ coordenada[1] for coordenada in coordenadas ]
+            centroids_proximos.append( [ (sum(X)/len(X)), (sum(Y)/len(Y)) ] )
+
+        return centroids_proximos
+
     def fit_k_means(self, qt_centroids: list, parada: int, max_iter: int, max_item_conjunto: int = None):
 
         colunm_x: str = 'cases'
@@ -33,15 +55,12 @@ class KmeansCalculo:
         self.N = len(self.conjunto)
         self.x = self.conjunto[colunm_x].values
         self.y = self.conjunto[colunm_y].values
-
-        # print(self.N)
-        # print(self.x)
-        # print(self.y)
-
+        
         centroids = self.gerar_pontos_centroids(qt_centroids)
         matrix = self.lista_distancia_centroids(self.conjunto, centroids)
-
-        return self.x, self.y, self.N, matrix
+        centroids_proximos = self.lista_centroids_mais_proximos(matrix) 
+        
+        return self.x, self.y, self.N, centroids_proximos
 
     def gerar_pontos_centroids(self, quantidade_pontos: int = 3):
         max_x = self.x.max()
@@ -105,23 +124,6 @@ class KmeansCalculo:
 
         # print(matriz)
         return matriz
-    
-    def lista_centroids_mais_proximos(self, matriz: pd.DataFrame):
-        df = matriz.squeeze()
-        centroides = [centroides for centroides in df['centroid'].astype('str').unique()]
-
-        resultado = []
-        for centroid in centroides:
-            sorted_df = df[df['centroid'].astype('str') == centroid ]
-            sorted_df['ponto'] = sorted_df['ponto'].astype('str')
-            sorted_df['centroid'] = sorted_df['centroid'].astype('str')
-            sorted_df['dist'] = sorted_df['dist'].astype('float64')
-            sorted_df = sorted_df.drop_duplicates()
-            sorted_df = sorted_df.sort_values(by=['dist'])
-            resultado.append( [ centroid, sorted_df['ponto'].to_list()[0] ] )
-
-        resultado = pd.DataFrame(resultado, columns=['centroid', 'ponto'])
-        return resultado
 
     def distribuir_pontos_centroids(self, matriz: pd.DataFrame):
         self.matriz = matriz
