@@ -1,4 +1,5 @@
 from mpmath import mp
+import numpy as np
 
 
 class Formulas:
@@ -18,8 +19,6 @@ class Formulas:
         x2 = ponto_centroid[0]
         y2 = ponto_centroid[1]
 
-        # distancia = format(float(mp.sqrt(mp.exp(x1 - x2) + mp.exp(y1 - y2))),'.7f')
-        distancia = float(mp.sqrt(mp.exp(x1 - x2) + mp.exp(y1 - y2)))
+        distancia = np.sqrt(((x1 - x2) ** 2) + ((y1 - y2) ** 2))
 
         return distancia
-
