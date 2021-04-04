@@ -2,6 +2,7 @@ import random
 
 import pandas as pd
 import math
+import numpy as np
 from mpmath import mp
 
 
@@ -19,6 +20,18 @@ class KmeansCalculo:
     def calcula_hipotenusa(self, a: float, b: float):
         hipotenusa = ((a * a) + (b * b))
         return hipotenusa
+
+    def centroids_otimizados(self, parada: int, centroids: list, centroids_proximos: list):
+        #np.sum((current_centroid-original_centroid)/original_centroid*100.0)
+        optimized = False
+        for c in range(0, len(centroids)):
+            originalX, originalY = centroids[c]
+            currentX, currentY = centroids_proximos[c]
+            X_bool = ((currentX - originalX)/originalX*100.0) > parada
+            Y_bool = ((currentY - originalY)/originalY*100.0) > parada
+            optimized = X_bool and Y_bool
+        
+        return optimized
 
     def lista_centroids_mais_proximos(self, matriz: pd.DataFrame):
         df = matriz.squeeze()
@@ -58,7 +71,10 @@ class KmeansCalculo:
         
         centroids = self.gerar_pontos_centroids(qt_centroids)
         matrix = self.lista_distancia_centroids(self.conjunto, centroids)
-        centroids_proximos = self.lista_centroids_mais_proximos(matrix) 
+        centroids_proximos = self.lista_centroids_mais_proximos(matrix)
+        centroid_otimizado = self.centroids_otimizados(parada, centroids, centroids_proximos)
+
+        print(centroid_otimizado)
         
         return self.x, self.y, self.N, centroids_proximos
 
