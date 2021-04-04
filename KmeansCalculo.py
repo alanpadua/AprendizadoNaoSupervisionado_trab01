@@ -1,9 +1,8 @@
 import random
+from _pydecimal import Decimal
 
-import numpy
 import numpy as np
 import pandas as pd
-import operator as op
 
 from Formulas import Formulas
 
@@ -11,6 +10,13 @@ from Formulas import Formulas
 class KmeansCalculo:
 
     def __init__(self, conjunto: pd.DataFrame, max_iter: int = 10, parada: int = 10):
+        """
+        Inicialização das vairaveis e conjunto que será processado
+
+        :param conjunto:
+        :param max_iter:
+        :param parada:
+        """
         self.X = None
         self.y = None
         self.N = None
@@ -23,6 +29,12 @@ class KmeansCalculo:
         self.parada = parada
 
     def fit_k_means(self, qt_centroids: int):
+        """
+        Método Main inicial para simular o Kmenas
+
+        :param qt_centroids:
+        :return:
+        """
         colunm_x: str = 'cases'
         colunm_y: str = 'deaths'
 
@@ -37,6 +49,12 @@ class KmeansCalculo:
         return self.X, self.y, self.N, self.centroids, self.matriz
 
     def gerar_pontos_centroids(self, quantidade_pontos: int = 3):
+        """
+        Gera os pontos aleatórios do centroid
+
+        :param quantidade_pontos:
+        :return:
+        """
         max_x = self.X.max()
         max_y = self.y.max()
         self.K = quantidade_pontos
@@ -65,27 +83,20 @@ class KmeansCalculo:
         for item_p in range(0, total_conjuntos):
             menor_distancia = 0
             row = None
-            print("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")
             for _centroid in range(0, total_centroides):
-                print("===============================================")
                 ponto_conjunto = [self.conjunto[colunm_x][item_p], self.conjunto[colunm_y][item_p]]
-                ponto_centroid = [self.centroids[_centroid][0],     self.centroids[_centroid][1]]
+                ponto_centroid = [self.centroids[_centroid][0], self.centroids[_centroid][1]]
                 dist = Formulas().distancia_ponto_centroid(ponto_conjunto, ponto_centroid)
-                print(f"menor_distancia: {menor_distancia}")
-                print(f"dist: {dist}")
-                print(f"Condição 1: dist <= menor_distancia: {dist <= menor_distancia}")
-                print(f"Condição 2: row == None: {row == None}")
-                # if dist <= menor_distancia or row == None:
-
-                if op.lt(dist, menor_distancia) or row == None:
-                    print("########")
+                if dist < menor_distancia or row == None:
                     menor_distancia = dist
-                    print("centroid_" + _centroid.__str__())
+                    # print("centroid_" + _centroid.__str__())
+                    # print(f"distancia: {dist}")
+                    # print(f"menor distancia: {menor_distancia}")
                     row = [self.conjunto[colunm_x][item_p], self.conjunto[colunm_y][item_p],
                            self.centroids[_centroid][0], self.centroids[_centroid][1],
                            "centroid_" + _centroid.__str__(),
                            dist]
-                    print("#######")
+                    # print(row)
             matriz.append(row)
 
         matriz = pd.DataFrame(matriz, columns=['ponto_x', 'ponto_y', 'centroid_x', 'centroid_y', 'centroid_id', 'dist'])

@@ -56,9 +56,8 @@ class Main:
         X, y, N, centroids, matriz = kmeansCalculo.fit_k_means(qt_centroids=self.K)
         # X, y, N, centroids, matriz = kmeansCalculo.fit_k_means(qt_centroids=5, parada=20, max_iter=20)
 
-        # self.graficos.grafico_com_centroiods(kmeansCalculo.conjunto, centroids)
-        self.graficos.grafico_com_centroiods_agrupados(matriz, centroids)
-
+        self.graficos.grafico_com_centroiods(kmeansCalculo.conjunto, centroids, visualizar_label_centroid=False)
+        self.graficos.grafico_com_centroiods_agrupados(matriz, centroids, visualizar_legenda=True, visualizar_label_centroid=False)
 
         # kmeansCalculo.lista_centroids_mais_proximos(matriz)
 

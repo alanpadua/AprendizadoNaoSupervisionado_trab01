@@ -1,5 +1,5 @@
-from mpmath import mp
 import numpy as np
+from scipy.spatial import distance
 
 
 class Formulas:
@@ -19,6 +19,7 @@ class Formulas:
         x2 = ponto_centroid[0]
         y2 = ponto_centroid[1]
 
-        distancia = np.sqrt(((x1 - x2) ** 2) + ((y1 - y2) ** 2))
+        # distancia = np.sqrt(((x1 - x2) ** 2) + ((y1 - y2) ** 2))
+        # return distancia
 
-        return distancia
+        return distance.euclidean(ponto_conjunto, ponto_centroid)
