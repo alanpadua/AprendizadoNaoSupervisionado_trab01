@@ -23,15 +23,15 @@ class KmeansCalculo:
 
     def centroids_otimizados(self, parada: int, centroids: list, centroids_proximos: list):
         #np.sum((current_centroid-original_centroid)/original_centroid*100.0)
-        optimized = False
-        for c in range(0, len(centroids)):
+        optimized = [] 
+        for c in range(0, len(centroids)-1):
             originalX, originalY = centroids[c]
             currentX, currentY = centroids_proximos[c]
             X_bool = ((currentX - originalX)/originalX*100.0) > parada
             Y_bool = ((currentY - originalY)/originalY*100.0) > parada
-            optimized = X_bool and Y_bool
+            optimized.append(X_bool and Y_bool)
         
-        return optimized
+        return all(optimized)
 
     def lista_centroids_mais_proximos(self, matriz: pd.DataFrame):
         df = matriz.squeeze()
@@ -70,13 +70,24 @@ class KmeansCalculo:
         self.y = self.conjunto[colunm_y].values
         
         centroids = self.gerar_pontos_centroids(qt_centroids)
-        matrix = self.lista_distancia_centroids(self.conjunto, centroids)
-        centroids_proximos = self.lista_centroids_mais_proximos(matrix)
-        centroid_otimizado = self.centroids_otimizados(parada, centroids, centroids_proximos)
 
-        print(centroid_otimizado)
+        for iteration in range(max_iter):
+            print('Iteração N°', iteration)
+            matrix = self.lista_distancia_centroids(self.conjunto, centroids)
+            centroids_proximos = self.lista_centroids_mais_proximos(matrix)
+            centroid_otimizado = self.centroids_otimizados(parada, centroids, centroids_proximos)
+
+            print('Centroidse: ', centroids)
+            print('Lista de Distancia entre centroids:', matrix)
+            print('Lista de centroids proximos', centroids_proximos)
+            print('Centroid otimizado?', centroid_otimizado)
+
+            if centroid_otimizado :
+                break
+            else :
+                centroids = centroids_proximos
         
-        return self.x, self.y, self.N, centroids_proximos
+        return self.x, self.y, self.N, centroids
 
     def gerar_pontos_centroids(self, quantidade_pontos: int = 3):
         max_x = self.x.max()
