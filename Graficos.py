@@ -72,10 +72,10 @@ class Graficos:
         pontos = np.array(pontos_centroid)
         plt.scatter(pontos[:, 0], pontos[:, 1], color='black', marker="x", alpha=1)
 
-        if visualizar_label_centroid : self.label_do_centroid(zip(pontos[:, 0], pontos[:, 1]))
+        if visualizar_label_centroid: self.label_do_centroid(zip(pontos[:, 0], pontos[:, 1]))
 
-        plt.xlabel("Cases")
-        plt.ylabel("Deaths")
+        plt.xlabel("Cases (X)")
+        plt.ylabel("Deaths (y)")
         plt.grid(True)
 
         plt.show()
@@ -96,7 +96,8 @@ class Graficos:
                          ha='center')  # horizontal alinhamento pode ser: left, right or center
             count += 1
 
-    def grafico_com_centroiods_agrupados(self, matriz: pd.DataFrame, pontos_centroid: list, visualizar_legenda=True, visualizar_label_centroid=True):
+    def grafico_com_centroiods_agrupados(self, matriz: pd.DataFrame, pontos_centroid: list, visualizar_legenda=True,
+                                         visualizar_label_centroid=True):
         """
         Gera os graficaos dos agrupados por centroids e coloca cores para visualização.
 
@@ -105,7 +106,8 @@ class Graficos:
         :return:
         """
 
-        lista_cores = self.cores
+        lista_cores = self.cores.copy()
+        print(lista_cores)
         count: int = 0
         handles = []
         for _grupo in range(0, len(pontos_centroid)):
@@ -126,12 +128,14 @@ class Graficos:
             plt.scatter(pontos_centroid[_grupo][0], pontos_centroid[_grupo][1], color=cor, s=50, marker="x", alpha=1)
             count += 1
 
-        if visualizar_label_centroid : self.label_do_centroid(pontos_centroid)
+        if visualizar_label_centroid: self.label_do_centroid(pontos_centroid)
         if visualizar_legenda: plt.legend(handles=handles)
-        plt.xlabel("Cases")
-        plt.ylabel("Deaths")
+        plt.xlabel("Cases (X)")
+        plt.ylabel("Deaths (y)")
         plt.grid(True)
         plt.show()
+
+        return self
 
     def cores_ramdomicas(self):
         """

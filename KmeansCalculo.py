@@ -3,6 +3,7 @@ from _pydecimal import Decimal
 
 import numpy as np
 import pandas as pd
+from numpy import math
 
 from Formulas import Formulas
 
@@ -46,7 +47,15 @@ class KmeansCalculo:
         self.centroids = self.gerar_pontos_centroids(qt_centroids)
         self.matriz = self.lista_distancia_centroids(self.conjunto)
 
-        return self.X, self.y, self.N, self.centroids, self.matriz
+        # return self.X, self.y, self.N, self.centroids, self.matriz
+        return self.centroids, self.matriz
+
+    def recalcular_centroids(self):
+        for _index in range(0, self.max_iter):
+            self.centroids = self.reposicionar_centroids(self.centroids, matriz=self.matriz)
+            self.matriz = self.lista_distancia_centroids(self.conjunto)
+
+        return self.centroids, self.matriz
 
     def gerar_pontos_centroids(self, quantidade_pontos: int = 3):
         """
@@ -66,6 +75,31 @@ class KmeansCalculo:
             self.centroids.append([rand_x, rand_y])
 
         return sorted(self.centroids)
+
+    def reposicionar_centroids(self, centroids: list, matriz: pd.DataFrame, obj):
+
+        print(f"Centroid Entrada: {centroids}")
+
+        self.centroids: list = centroids
+        for _indice in range(0, len(centroids)):
+            # Filtrar pro grupo de centroids
+            filtro = f"centroid_id == 'centroid_{_indice}'"
+            sub_conjunto: pd.DataFrame = matriz.query(filtro)
+
+            if math.isnan(sub_conjunto.mean().ponto_x) or math.isnan(sub_conjunto.mean().ponto_y):
+                print("Deu nada, se jogou!!!!")
+                continue
+
+            print(f"Média x: {sub_conjunto.mean().ponto_x}")
+            print(f"Média y: {sub_conjunto.mean().ponto_y}")
+            self.centroids[_indice] = [round(sub_conjunto.mean().ponto_x), round(sub_conjunto.mean().ponto_y)]
+
+            print(obj.grafico_com_centroiods_agrupados(matriz, centroids, visualizar_legenda=True,
+                                                       visualizar_label_centroid=False))
+
+        print(f"Centroid Saida: {self.centroids}")
+
+        return self.centroids
 
     def lista_distancia_centroids(self, conjunto: pd.DataFrame, colunm_x: str = 'cases', colunm_y: str = 'deaths'):
         """

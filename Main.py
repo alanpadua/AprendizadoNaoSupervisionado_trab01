@@ -1,7 +1,7 @@
 from Formulas import Formulas
 from Graficos import Graficos
-from Processamento import Processamento
 from KmeansCalculo import KmeansCalculo
+from Processamento import Processamento
 
 
 class Main:
@@ -51,15 +51,17 @@ class Main:
         print("Teste Kmeans")
         conjunto = self.get_dataset_filtrado()
         # conjunto = self.get_dataset_processado()
+
         kmeansCalculo = KmeansCalculo(conjunto, parada=20, max_iter=20)
+        centroids, matriz = kmeansCalculo.fit_k_means(qt_centroids=self.K)
 
-        X, y, N, centroids, matriz = kmeansCalculo.fit_k_means(qt_centroids=self.K)
-        # X, y, N, centroids, matriz = kmeansCalculo.fit_k_means(qt_centroids=5, parada=20, max_iter=20)
+        # kmeansCalculo.reposicionar_centroids(centroids, matriz)
 
-        self.graficos.grafico_com_centroiods(kmeansCalculo.conjunto, centroids, visualizar_label_centroid=False)
-        self.graficos.grafico_com_centroiods_agrupados(matriz, centroids, visualizar_legenda=True, visualizar_label_centroid=False)
+        # self.graficos.grafico_com_centroiods(kmeansCalculo.conjunto, centroids, visualizar_label_centroid=False)
+        self.graficos.grafico_com_centroiods_agrupados(matriz, centroids, visualizar_legenda=True,
+                                                       visualizar_label_centroid=False)
 
-        # kmeansCalculo.lista_centroids_mais_proximos(matriz)
+        kmeansCalculo.reposicionar_centroids(centroids, matriz, self.graficos)
 
 
 main = Main()
