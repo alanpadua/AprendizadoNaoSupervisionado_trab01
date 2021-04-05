@@ -1,8 +1,10 @@
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+
 from Formulas import Formulas
 from Graficos import Graficos
 from KmeansCalculo import KmeansCalculo
 from Processamento import Processamento
-
 
 class Main:
 
@@ -65,10 +67,28 @@ class Main:
 
         kmeansCalculo.recalcular_centroids(centroids, matriz, self.graficos)
 
+    def compare_kmeans(self):
+        conjunto = self.get_dataset_filtrado()
+        X = conjunto['cases'].values.reshape(-1, 1)
+        y = conjunto['deaths'].values.reshape(-1, 1)
 
+        conjunto_tratado = conjunto[['cases', 'deaths']]
+
+        kmeans = KMeans(n_clusters=5).fit(conjunto_tratado)
+        centroids = kmeans.cluster_centers_
+
+        # print(centroids)
+        # print(kmeans.labels_)
+
+        # Plotting the cluster centers and the data points on a 2D plane
+        plt.scatter(conjunto_tratado['cases'], conjunto_tratado['deaths'], c=kmeans.labels_.astype(float), s=50,
+                    alpha=0.5)
+        plt.scatter(centroids[:, 0], centroids[:, 1], c='red', s=50)
+        plt.show()
 
 
 main = Main()
 main.processar_dataset()
 # main.imprimir_graficos()
 main.fit_k_means()
+main.compare_kmeans()
