@@ -4,30 +4,12 @@ from _pydecimal import Decimal
 import numpy as np
 import pandas as pd
 from numpy import math
+from Graficos import Graficos
 
 from Formulas import Formulas
 
 
 class KmeansCalculo:
-
-    def __init__(self, conjunto: pd.DataFrame, max_iter: int = 10, parada: int = 10):
-        """
-        Inicialização das vairaveis e conjunto que será processado
-
-        :param conjunto:
-        :param max_iter:
-        :param parada:
-        """
-        self.X = None
-        self.y = None
-        self.N = None
-        self.K = None
-        self.conjunto: pd.DataFrame = conjunto
-        self.centroids: list = None
-        self.matriz: list = None
-
-        self.max_iter = max_iter
-        self.parada = parada
 
     def fit_k_means(self, qt_centroids: int):
         """
@@ -36,6 +18,10 @@ class KmeansCalculo:
         :param qt_centroids:
         :return:
         """
+        self.X = None
+        self.y = None
+        self.N = None
+        self.K = None
         colunm_x: str = 'cases'
         colunm_y: str = 'deaths'
 
@@ -50,10 +36,27 @@ class KmeansCalculo:
         # return self.X, self.y, self.N, self.centroids, self.matriz
         return self.centroids, self.matriz
 
-    def recalcular_centroids(self):
+    def __init__(self, conjunto: pd.DataFrame, max_iter: int = 10, parada: int = 10):
+        """
+            Inicialização das vairaveis e conjunto que será processado
+
+            :param conjunto:
+            :param max_iter:
+            :param parada:
+            """
+        self.conjunto: pd.DataFrame = conjunto
+        self.centroids: list = None
+        self.matriz: list = None
+
+        self.max_iter = max_iter
+        self.parada = parada
+
+    def recalcular_centroids(self, centroids: list, matriz: pd.DataFrame, grafico: Graficos):
         for _index in range(0, self.max_iter):
-            self.centroids = self.reposicionar_centroids(self.centroids, matriz=self.matriz)
-            self.matriz = self.lista_distancia_centroids(self.conjunto)
+            self.centroids = self.reposicionar_centroids(centroids, matriz=matriz)
+            self.matriz = self.lista_distancia_centroids(self.matriz)
+
+            grafico.grafico_com_centroiods_agrupados(matriz, centroids, visualizar_legenda=True, visualizar_label_centroid=False)
 
         return self.centroids, self.matriz
 
@@ -76,8 +79,7 @@ class KmeansCalculo:
 
         return sorted(self.centroids)
 
-    def reposicionar_centroids(self, centroids: list, matriz: pd.DataFrame, obj):
-
+    def reposicionar_centroids(self, centroids: list, matriz: pd.DataFrame):
         print(f"Centroid Entrada: {centroids}")
 
         self.centroids: list = centroids
@@ -87,17 +89,10 @@ class KmeansCalculo:
             sub_conjunto: pd.DataFrame = matriz.query(filtro)
 
             if math.isnan(sub_conjunto.mean().ponto_x) or math.isnan(sub_conjunto.mean().ponto_y):
-                print("Deu nada, se jogou!!!!")
                 continue
-
-            print(f"Média x: {sub_conjunto.mean().ponto_x}")
-            print(f"Média y: {sub_conjunto.mean().ponto_y}")
             self.centroids[_indice] = [round(sub_conjunto.mean().ponto_x), round(sub_conjunto.mean().ponto_y)]
 
-            print(obj.grafico_com_centroiods_agrupados(matriz, centroids, visualizar_legenda=True,
-                                                       visualizar_label_centroid=False))
-
-        print(f"Centroid Saida: {self.centroids}")
+        print(f"Centroid Saida:   {self.centroids}")
 
         return self.centroids
 
@@ -123,14 +118,10 @@ class KmeansCalculo:
                 dist = Formulas().distancia_ponto_centroid(ponto_conjunto, ponto_centroid)
                 if dist < menor_distancia or row == None:
                     menor_distancia = dist
-                    # print("centroid_" + _centroid.__str__())
-                    # print(f"distancia: {dist}")
-                    # print(f"menor distancia: {menor_distancia}")
                     row = [self.conjunto[colunm_x][item_p], self.conjunto[colunm_y][item_p],
                            self.centroids[_centroid][0], self.centroids[_centroid][1],
                            "centroid_" + _centroid.__str__(),
                            dist]
-                    # print(row)
             matriz.append(row)
 
         matriz = pd.DataFrame(matriz, columns=['ponto_x', 'ponto_y', 'centroid_x', 'centroid_y', 'centroid_id', 'dist'])

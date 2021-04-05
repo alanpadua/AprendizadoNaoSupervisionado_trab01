@@ -107,7 +107,6 @@ class Graficos:
         """
 
         lista_cores = self.cores.copy()
-        print(lista_cores)
         count: int = 0
         handles = []
         for _grupo in range(0, len(pontos_centroid)):

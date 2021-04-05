@@ -52,16 +52,20 @@ class Main:
         conjunto = self.get_dataset_filtrado()
         # conjunto = self.get_dataset_processado()
 
-        kmeansCalculo = KmeansCalculo(conjunto, parada=20, max_iter=20)
+        kmeansCalculo = KmeansCalculo(conjunto, parada=20, max_iter=7)
         centroids, matriz = kmeansCalculo.fit_k_means(qt_centroids=self.K)
 
         # kmeansCalculo.reposicionar_centroids(centroids, matriz)
 
         # self.graficos.grafico_com_centroiods(kmeansCalculo.conjunto, centroids, visualizar_label_centroid=False)
-        self.graficos.grafico_com_centroiods_agrupados(matriz, centroids, visualizar_legenda=True,
-                                                       visualizar_label_centroid=False)
+        # self.graficos.grafico_com_centroiods_agrupados(matriz, centroids, visualizar_legenda=True, visualizar_label_centroid=False)
 
-        kmeansCalculo.reposicionar_centroids(centroids, matriz, self.graficos)
+        # Exemplo da função
+        # kmeansCalculo.reposicionar_centroids(centroids, matriz)
+
+        kmeansCalculo.recalcular_centroids(centroids, matriz, self.graficos)
+
+
 
 
 main = Main()
